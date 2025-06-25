@@ -25,7 +25,6 @@ import {
   Copy,
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import { shortenAddress } from "@/lib/utils";
 
 export function WalletConnection() {
   const {
@@ -60,9 +59,7 @@ export function WalletConnection() {
 
   // Format account ID for display
   let shortAccountId = accountId;
-  if (walletType === "evm" && accountId) {
-    shortAccountId = shortenAddress(accountId, 6, 4);
-  }
+
   // Format balance for display
   const formattedBalance = balance
     ? `${parseFloat(balance).toFixed(4)} HBAR`

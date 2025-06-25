@@ -153,8 +153,29 @@ const WalletProvider = ({ children }: { children: ReactNode }) => {
 
   // Sync EVM wallet state
   useEffect(() => {
+    const fetchHederaAccountId = async (evmAddr: string) => {
+      try {
+        // Use mainnet or testnet as needed
+        // const network = "testnet";
+        // const baseUrl =
+        //   network === "mainnet"
+        //     ? "https://mainnet-public.mirrornode.hedera.com/api/v1/accounts/"
+        //     : "https://testnet.mirrornode.hedera.com/api/v1/accounts/";
+        const baseUrl =
+          "https://testnet.mirrornode.hedera.com/api/v1/accounts/";
+        const res = await fetch(`${baseUrl}${evmAddr}`);
+        const data = await res.json();
+        if (data.account) {
+          setAccountId(data.account);
+        } else {
+          setAccountId(null);
+        }
+      } catch (e) {
+        setAccountId(null);
+      }
+    };
     if (isEvmConnected && evmAddress) {
-      setAccountId(evmAddress);
+      fetchHederaAccountId(evmAddress);
       setWalletType("evm");
     } else if (walletType === "evm") {
       setAccountId(null);
