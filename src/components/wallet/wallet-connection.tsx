@@ -25,20 +25,22 @@ import {
   Copy,
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { shortenAddress } from "@/lib/utils";
 
 export function WalletConnection() {
   const {
     connectWallet,
     disconnect,
-    connected,
+    // connected,
     accountId,
     userProfile,
     balance,
     walletType,
-    isPaired,
+    // isPaired,
+    // isEvmConnected,
   } = useContext(WalletContext);
   const { toast } = useToast();
-
+  console.log("Account ID.............:", accountId);
   const handleCopyAddress = () => {
     if (accountId) {
       navigator.clipboard.writeText(accountId);
@@ -49,7 +51,7 @@ export function WalletConnection() {
     }
   };
 
-  if (!connected || !isPaired) {
+  if (!accountId) {
     return (
       <Button onClick={connectWallet} className="flex items-center gap-2">
         <Wallet className="h-4 w-4" />
@@ -59,10 +61,10 @@ export function WalletConnection() {
   }
 
   // Format account ID for display
-  const shortAccountId = accountId
-    ? `${accountId.slice(0, 6)}...${accountId.slice(-4)}`
-    : "";
-
+  let shortAccountId = accountId;
+  if (walletType === "evm" && accountId) {
+    shortAccountId = shortenAddress(accountId, 6, 4);
+  }
   // Format balance for display
   const formattedBalance = balance
     ? `${parseFloat(balance).toFixed(4)} HBAR`

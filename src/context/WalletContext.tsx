@@ -15,6 +15,7 @@ interface WalletContextType {
   hederaAccountIds: string[];
   isPaired: boolean;
   pairingString: string;
+  isEvmConnected: boolean;
 }
 
 export const WalletContext = createContext<WalletContextType>({
@@ -28,6 +29,7 @@ export const WalletContext = createContext<WalletContextType>({
   connected: false,
   walletType: null,
   hederaAccountIds: [],
+  isEvmConnected: false,
   isPaired: false,
   pairingString: "",
 });
@@ -84,6 +86,7 @@ const WalletProvider = ({ children }: { children: ReactNode }) => {
   // Hedera wallet connect (dynamic import)
   const connectWallet = async () => {
     if (typeof window === "undefined") return;
+    let triedHedera = false;
     try {
       const WalletConnectModule = await import("@/hooks/walletConnect");
       // Example (uncomment and adapt as needed):
@@ -92,6 +95,7 @@ const WalletProvider = ({ children }: { children: ReactNode }) => {
         console.log("Initializing Hedera wallet connection...");
         await WalletConnectModule.hc.init();
         WalletConnectModule.hc.openPairingModal();
+        triedHedera = true;
       } else {
         WalletConnectModule.hc.disconnect();
         setHederaAccountIds([]);
@@ -99,9 +103,36 @@ const WalletProvider = ({ children }: { children: ReactNode }) => {
         setPairingString("");
         setAccountId(null);
         setWalletType(null);
+        triedHedera = true;
       }
     } catch (e) {
       // Ignore if not available
+    }
+    // If Hedera connection failed or not available, try EVM wallet
+    if (
+      !triedHedera ||
+      (!isPaired && (!hederaAccountIds || hederaAccountIds.length === 0))
+    ) {
+      try {
+        if (window.ethereum) {
+          const { addOrSwitchHederaTestnet } = await import(
+            "@/hooks/useEvmWallet"
+          );
+          await window.ethereum.request({ method: "eth_requestAccounts" });
+          await addOrSwitchHederaTestnet();
+          const accounts = await window.ethereum.request({
+            method: "eth_accounts",
+          });
+          setAccountId(accounts[0]);
+          setWalletType("evm");
+        } else {
+          throw new Error("No EVM wallet found");
+        }
+      } catch (err) {
+        // Optionally handle error (e.g., show notification)
+        setAccountId(null);
+        setWalletType(null);
+      }
     }
   };
 
@@ -191,7 +222,8 @@ const WalletProvider = ({ children }: { children: ReactNode }) => {
       connectWallet,
       connectEvmWallet,
       disconnect,
-      connected: isEvmConnected || Boolean(accountId),
+      connected: Boolean(accountId),
+      isEvmConnected,
       walletType,
       hederaAccountIds,
       isPaired,

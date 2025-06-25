@@ -16,10 +16,6 @@ const projectId = import.meta.env.VITE_PUBLIC_WALLET_CONNECT_PROJECT_ID;
 if (!projectId) {
   throw new Error("Missing VITE_PUBLIC_WALLET_CONNECT_PROJECT_ID");
 }
-const { wallets } = getDefaultWallets({
-  appName: "Treasury Manager",
-  projectId,
-});
 
 export function Providers() {
   const [config] = useState(() => getConfig());
