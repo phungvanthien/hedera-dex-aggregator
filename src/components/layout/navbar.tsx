@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { WalletConnection } from "../wallet/wallet-connection";
-
+import { WalletContext } from "@/context/WalletContext";
 const navigation = [
   { name: "Home", href: "/", icon: Home },
   { name: "Trade", href: "/trade", icon: TrendingUp },
@@ -26,6 +26,7 @@ const navigation = [
 export function Navbar() {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+  const { accountId } = useContext(WalletContext);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -38,23 +39,25 @@ export function Navbar() {
             <span className="font-bold text-xl">HederaDEX</span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-6">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                className={cn(
-                  "flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary",
-                  location.pathname === item.href
-                    ? "text-primary"
-                    : "text-muted-foreground"
-                )}
-              >
-                <item.icon className="h-4 w-4" />
-                {item.name}
-              </Link>
-            ))}
-          </nav>
+          {accountId && (
+            <nav className="hidden md:flex items-center gap-6">
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={cn(
+                    "flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary",
+                    location.pathname === item.href
+                      ? "text-primary"
+                      : "text-muted-foreground"
+                  )}
+                >
+                  <item.icon className="h-4 w-4" />
+                  {item.name}
+                </Link>
+              ))}
+            </nav>
+          )}
         </div>
 
         <div className="flex items-center gap-4">

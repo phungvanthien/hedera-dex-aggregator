@@ -48,9 +48,7 @@ const WalletProvider = ({ children }: { children: ReactNode }) => {
   const { address: evmAddress, isConnected: isEvmConnected } = useAccount();
   const { connectAsync, connectors } = useConnect();
   const { disconnectAsync: evmDisconnect } = useDisconnect();
-  console.log("Account ID:", accountId);
-  console.log("is connected:", isEvmConnected);
-  console.log("is paired:", isPaired);
+
   useEffect(() => {
     let cleanup: (() => void) | undefined;
     let isMounted = true;
@@ -90,9 +88,7 @@ const WalletProvider = ({ children }: { children: ReactNode }) => {
     try {
       const WalletConnectModule = await import("@/hooks/walletConnect");
       // Example (uncomment and adapt as needed):
-      console.log("Connecting to Hedera wallet...");
       if (!isPaired) {
-        console.log("Initializing Hedera wallet connection...");
         await WalletConnectModule.hc.init();
         WalletConnectModule.hc.openPairingModal();
         triedHedera = true;

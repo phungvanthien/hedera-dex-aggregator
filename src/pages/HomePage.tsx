@@ -1,53 +1,68 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import { ArrowRight, Zap, Shield, TrendingUp, BarChart3, Bell, Repeat } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Link } from "react-router-dom"
+import { useState, useEffect, useContext } from "react";
+import { motion } from "framer-motion";
+import {
+  ArrowRight,
+  Zap,
+  Shield,
+  TrendingUp,
+  BarChart3,
+  Bell,
+  Repeat,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Link } from "react-router-dom";
+import { WalletContext } from "@/context/WalletContext";
 
 const features = [
   {
     icon: Zap,
     title: "Multi-DEX Aggregation",
-    description: "Access liquidity from SaucerSwap, Pangolin, HeliSwap, and HSuite in one interface",
+    description:
+      "Access liquidity from SaucerSwap, Pangolin, HeliSwap, and HSuite in one interface",
   },
   {
     icon: Shield,
     title: "Secure Trading",
-    description: "Multi-wallet support with HashPack, Blade Wallet, and Web3Auth integration",
+    description:
+      "Multi-wallet support with HashPack, Blade Wallet, and Web3Auth integration",
   },
   {
     icon: TrendingUp,
     title: "Smart Routing",
-    description: "AI-powered optimal path finding across multiple DEXs for best rates",
+    description:
+      "AI-powered optimal path finding across multiple DEXs for best rates",
   },
   {
     icon: BarChart3,
     title: "Advanced Analytics",
-    description: "Professional TradingView charts with comprehensive trading insights",
+    description:
+      "Professional TradingView charts with comprehensive trading insights",
   },
   {
     icon: Bell,
     title: "Price Alerts",
-    description: "Automated trading with stop-loss, take-profit, and DCA strategies",
+    description:
+      "Automated trading with stop-loss, take-profit, and DCA strategies",
   },
   {
     icon: Repeat,
     title: "Cross-Chain Bridge",
     description: "Seamless token bridging across different blockchain networks",
   },
-]
+];
 
 export default function HomePage() {
-  const [mounted, setMounted] = useState(false)
+  const [mounted, setMounted] = useState(false);
+  const { accountId, connectWallet } = useContext(WalletContext);
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
-  if (!mounted) return null
+  if (!mounted) return null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
@@ -94,8 +109,9 @@ export default function HomePage() {
               transition={{ duration: 0.8, delay: 0.8 }}
               className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed"
             >
-              The most advanced DEX aggregator for Hedera. Access optimal liquidity, automated trading strategies, and
-              professional-grade analytics all in one platform.
+              The most advanced DEX aggregator for Hedera. Access optimal
+              liquidity, automated trading strategies, and professional-grade
+              analytics all in one platform.
             </motion.p>
 
             <motion.div
@@ -104,15 +120,42 @@ export default function HomePage() {
               transition={{ duration: 0.8, delay: 1 }}
               className="flex flex-col sm:flex-row gap-4 justify-center items-center"
             >
-              <Button asChild size="lg" className="text-lg px-8 py-6">
-                <Link to="/trade">
-                  Start Trading
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg" className="text-lg px-8 py-6">
-                <Link to="/analytics">View Analytics</Link>
-              </Button>
+              {accountId ? (
+                <>
+                  <Button asChild size="lg" className="text-lg px-8 py-6">
+                    <Link to="/trade">
+                      Start Trading
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Link>
+                  </Button>
+                  <Button
+                    asChild
+                    variant="outline"
+                    size="lg"
+                    className="text-lg px-8 py-6"
+                  >
+                    <Link to="/analytics">View Analytics</Link>
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    size="lg"
+                    className="text-lg px-8 py-6"
+                    onClick={connectWallet}
+                  >
+                    Connect Wallet
+                  </Button>
+                  <Button
+                    asChild
+                    variant="outline"
+                    size="lg"
+                    className="text-lg px-8 py-6"
+                  >
+                    <Link to="/docs">View Docs</Link>
+                  </Button>
+                </>
+              )}
             </motion.div>
 
             <motion.div
@@ -148,9 +191,12 @@ export default function HomePage() {
             viewport={{ once: true }}
             className="text-center space-y-4 mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold">Powerful Trading Features</h2>
+            <h2 className="text-4xl md:text-5xl font-bold">
+              Powerful Trading Features
+            </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Everything you need to trade efficiently on Hedera with advanced automation and analytics
+              Everything you need to trade efficiently on Hedera with advanced
+              automation and analytics
             </p>
           </motion.div>
 
@@ -169,7 +215,9 @@ export default function HomePage() {
                       <feature.icon className="h-6 w-6 text-primary" />
                     </div>
                     <h3 className="text-xl font-semibold">{feature.title}</h3>
-                    <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
+                    <p className="text-muted-foreground leading-relaxed">
+                      {feature.description}
+                    </p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -218,9 +266,12 @@ export default function HomePage() {
             viewport={{ once: true }}
             className="space-y-8"
           >
-            <h2 className="text-4xl md:text-5xl font-bold">Ready to Start Trading?</h2>
+            <h2 className="text-4xl md:text-5xl font-bold">
+              Ready to Start Trading?
+            </h2>
             <p className="text-xl text-muted-foreground">
-              Join thousands of traders using the most advanced DEX aggregator on Hedera
+              Join thousands of traders using the most advanced DEX aggregator
+              on Hedera
             </p>
             <Button asChild size="lg" className="text-lg px-8 py-6">
               <Link to="/trade">
@@ -232,5 +283,5 @@ export default function HomePage() {
         </div>
       </section>
     </div>
-  )
+  );
 }

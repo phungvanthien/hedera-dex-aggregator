@@ -40,7 +40,6 @@ export function WalletConnection() {
     // isEvmConnected,
   } = useContext(WalletContext);
   const { toast } = useToast();
-  console.log("Account ID.............:", accountId);
   const handleCopyAddress = () => {
     if (accountId) {
       navigator.clipboard.writeText(accountId);
@@ -50,7 +49,6 @@ export function WalletConnection() {
       });
     }
   };
-
   if (!accountId) {
     return (
       <Button onClick={connectWallet} className="flex items-center gap-2">
@@ -85,7 +83,8 @@ export function WalletConnection() {
         <DropdownMenuLabel>
           <div className="flex flex-col gap-2">
             <div className="font-normal text-xs text-muted-foreground">
-              Connected with {walletType === "hedera" ? "HashPack" : "MetaMask"}
+              Connected with{" "}
+              {walletType === "hedera" ? "HashPack" : "EVM Wallet"}
             </div>
             <div className="font-semibold">{formattedBalance}</div>
           </div>
