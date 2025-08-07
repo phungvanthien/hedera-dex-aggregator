@@ -26,11 +26,11 @@ if (!alchemyApiKey) {
   throw new Error("Missing ALCHEMY_API_KEY");
 }
 
-// Hedera Testnet EVM chain config
-export const hederaTestnet = {
-  id: 296,
-  name: "Hedera Testnet",
-  network: "hedera-testnet",
+// Hedera Mainnet EVM chain config
+export const hederaMainnet = {
+  id: 295,
+  name: "Hedera Mainnet",
+  network: "hedera-mainnet",
   nativeCurrency: {
     name: "HBAR",
     symbol: "HBAR",
@@ -38,16 +38,16 @@ export const hederaTestnet = {
   },
   rpcUrls: {
     default: {
-      http: ["https://testnet.hashio.io/api"],
+      http: ["https://mainnet.hashio.io/api"],
     },
     public: {
-      http: ["https://testnet.hashio.io/api"],
+      http: ["https://mainnet.hashio.io/api"],
     },
   },
   blockExplorers: {
-    default: { name: "HashScan", url: "https://hashscan.io/testnet" },
+    default: { name: "HashScan", url: "https://hashscan.io" },
   },
-  testnet: true,
+  testnet: false,
 };
 
 export const chains = [
@@ -68,7 +68,7 @@ export const chains = [
   optimismGoerli,
   baseGoerli,
   lineaGoerli,
-  hederaTestnet, // <-- Add Hedera testnet here
+  hederaMainnet, // <-- Add Hedera mainnet here
 ] as const;
 
 export function config() {

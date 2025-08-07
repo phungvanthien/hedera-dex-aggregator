@@ -2,7 +2,7 @@
 import { HashConnect } from "hashconnect/dist/hashconnect.js";
 import { LedgerId } from "@hashgraph/sdk";
 
-const env = "testnet";
+const env = "mainnet";
 const projectId = "0c306a1b7d3106ac56154e190058a550";
 const appMetadata = {
   name: "HederaDEX",

@@ -11,6 +11,7 @@ interface WalletContextType {
   connectEvmWallet: () => Promise<void>;
   disconnect: () => void;
   connected: boolean;
+  isConnected?: boolean; // Alias for connected for backward compatibility
   walletType: "hedera" | "evm" | null;
   hederaAccountIds: string[];
   isPaired: boolean;
@@ -84,51 +85,51 @@ const WalletProvider = ({ children }: { children: ReactNode }) => {
   // Hedera wallet connect (dynamic import)
   const connectWallet = async () => {
     if (typeof window === "undefined") return;
-    let triedHedera = false;
+    
+    // Use HashPack only for Hedera transactions
     try {
       const WalletConnectModule = await import("@/hooks/walletConnect");
-      // Example (uncomment and adapt as needed):
       if (!isPaired) {
         await WalletConnectModule.hc.init();
         WalletConnectModule.hc.openPairingModal();
-        triedHedera = true;
+        // Only use HashPack - no EVM fallback
+        return;
       } else {
+        // If already paired, disconnect first
         WalletConnectModule.hc.disconnect();
         setHederaAccountIds([]);
         setIsPaired(false);
         setPairingString("");
         setAccountId(null);
         setWalletType(null);
-        triedHedera = true;
+        return;
       }
     } catch (e) {
-      // Ignore if not available
+      console.log("HashPack not available, trying EVM wallet");
     }
-    // If Hedera connection failed or not available, try EVM wallet
-    if (
-      !triedHedera ||
-      (!isPaired && (!hederaAccountIds || hederaAccountIds.length === 0))
-    ) {
-      try {
-        if (window.ethereum) {
-          const { addOrSwitchHederaTestnet } = await import(
-            "@/hooks/useEvmWallet"
-          );
-          await window.ethereum.request({ method: "eth_requestAccounts" });
-          await addOrSwitchHederaTestnet();
-          const accounts = await window.ethereum.request({
-            method: "eth_accounts",
-          });
+    
+    // Only try EVM wallet if HashPack is not available
+    try {
+      if (window.ethereum) {
+        const { addOrSwitchHederaMainnet } = await import(
+          "@/hooks/useEvmWallet"
+        );
+        await window.ethereum.request({ method: "eth_requestAccounts" });
+        await addOrSwitchHederaMainnet();
+        const accounts = await window.ethereum.request({
+          method: "eth_accounts",
+        });
+        if (accounts && accounts.length > 0) {
           setAccountId(accounts[0]);
           setWalletType("evm");
-        } else {
-          throw new Error("No EVM wallet found");
         }
-      } catch (err) {
-        // Optionally handle error (e.g., show notification)
-        setAccountId(null);
-        setWalletType(null);
+      } else {
+        console.log("No EVM wallet found");
       }
+    } catch (err) {
+      console.error("EVM wallet connection failed:", err);
+      setAccountId(null);
+      setWalletType(null);
     }
   };
 
@@ -156,13 +157,11 @@ const WalletProvider = ({ children }: { children: ReactNode }) => {
     const fetchHederaAccountId = async (evmAddr: string) => {
       try {
         // Use mainnet or testnet as needed
-        // const network = "testnet";
-        // const baseUrl =
-        //   network === "mainnet"
-        //     ? "https://mainnet-public.mirrornode.hedera.com/api/v1/accounts/"
-        //     : "https://testnet.mirrornode.hedera.com/api/v1/accounts/";
+        const network = "mainnet";
         const baseUrl =
-          "https://testnet.mirrornode.hedera.com/api/v1/accounts/";
+          network === "mainnet"
+            ? "https://mainnet-public.mirrornode.hedera.com/api/v1/accounts/"
+            : "https://testnet.mirrornode.hedera.com/api/v1/accounts/";
         const res = await fetch(`${baseUrl}${evmAddr}`);
         const data = await res.json();
         if (data.account) {
@@ -194,7 +193,7 @@ const WalletProvider = ({ children }: { children: ReactNode }) => {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ accountId: accountId, network: "testnet" }),
+            body: JSON.stringify({ accountId: accountId, network: "mainnet" }),
           }
         );
         if (!request.ok) {
@@ -240,6 +239,7 @@ const WalletProvider = ({ children }: { children: ReactNode }) => {
       connectEvmWallet,
       disconnect,
       connected: Boolean(accountId),
+      isConnected: Boolean(accountId), // Alias for backward compatibility
       isEvmConnected,
       walletType,
       hederaAccountIds,

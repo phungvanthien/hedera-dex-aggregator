@@ -11,6 +11,8 @@ import {
   Settings,
   Home,
   TrendingUp,
+  Zap,
+  Layers,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { WalletConnection } from "../wallet/wallet-connection";
@@ -18,6 +20,8 @@ import { WalletContext } from "@/context/WalletContext";
 const navigation = [
   { name: "Home", href: "/", icon: Home },
   { name: "Trade", href: "/trade", icon: TrendingUp },
+  { name: "Aggregator", href: "/aggregator", icon: Zap },
+  { name: "Hedera Aggregator", href: "/hedera-aggregator", icon: Layers },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },
   { name: "Alerts", href: "/alerts", icon: Bell },
   { name: "Settings", href: "/settings", icon: Settings },

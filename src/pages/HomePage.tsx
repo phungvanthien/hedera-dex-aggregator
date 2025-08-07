@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { WalletContext } from "@/context/WalletContext";
+import { WalletSelector } from "@/components/wallet/wallet-selector";
 
 const features = [
   {
@@ -123,7 +124,7 @@ export default function HomePage() {
               {accountId ? (
                 <>
                   <Button asChild size="lg" className="text-lg px-8 py-6">
-                    <Link to="/trade">
+                    <Link to="/aggregator">
                       Start Trading
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Link>
@@ -134,18 +135,12 @@ export default function HomePage() {
                     size="lg"
                     className="text-lg px-8 py-6"
                   >
-                    <Link to="/analytics">View Analytics</Link>
+                    <Link to="/trade">Advanced Trade</Link>
                   </Button>
                 </>
               ) : (
                 <>
-                  <Button
-                    size="lg"
-                    className="text-lg px-8 py-6"
-                    onClick={connectWallet}
-                  >
-                    Connect Wallet
-                  </Button>
+                  <WalletSelector />
                   <Button
                     asChild
                     variant="outline"
@@ -274,7 +269,7 @@ export default function HomePage() {
               on Hedera
             </p>
             <Button asChild size="lg" className="text-lg px-8 py-6">
-              <Link to="/trade">
+              <Link to="/aggregator">
                 Launch App
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>

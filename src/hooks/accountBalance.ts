@@ -7,8 +7,8 @@ interface AccountBalanceResult {
 
 const accountBalance = async (accountId: string): Promise<string | null> => {
   try {
-    // Initialize the Hedera client for testnet
-    const client: Client = Client.forTestnet();
+    // Initialize the Hedera client for mainnet
+    const client: Client = Client.forMainnet();
 
     // Execute the AccountBalanceQuery with the account ID
     const accountBalance = await new AccountBalanceQuery()

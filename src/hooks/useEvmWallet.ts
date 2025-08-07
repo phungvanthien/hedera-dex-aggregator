@@ -1,13 +1,13 @@
 import { useCallback } from "react";
-import { hederaTestnet } from "../config/wagmi";
+import { hederaMainnet } from "../config/wagmi";
 
-// Utility to prompt wallet to add/switch to Hedera testnet
-export async function addOrSwitchHederaTestnet() {
+// Utility to prompt wallet to add/switch to Hedera mainnet
+export async function addOrSwitchHederaMainnet() {
   if (!window.ethereum) throw new Error("No EVM wallet found");
   try {
     await window.ethereum.request({
       method: "wallet_switchEthereumChain",
-      params: [{ chainId: "0x128" }], // 296 in hex
+      params: [{ chainId: "0x127" }], // 295 in hex
     });
   } catch (switchError: any) {
     // If the chain has not been added to MetaMask, add it
@@ -16,11 +16,11 @@ export async function addOrSwitchHederaTestnet() {
         method: "wallet_addEthereumChain",
         params: [
           {
-            chainId: "0x128",
-            chainName: hederaTestnet.name,
-            nativeCurrency: hederaTestnet.nativeCurrency,
-            rpcUrls: hederaTestnet.rpcUrls.default.http,
-            blockExplorerUrls: [hederaTestnet.blockExplorers.default.url],
+            chainId: "0x127",
+            chainName: hederaMainnet.name,
+            nativeCurrency: hederaMainnet.nativeCurrency,
+            rpcUrls: hederaMainnet.rpcUrls.default.http,
+            blockExplorerUrls: [hederaMainnet.blockExplorers.default.url],
           },
         ],
       });
@@ -30,14 +30,14 @@ export async function addOrSwitchHederaTestnet() {
   }
 }
 
-// React hook for connecting to EVM wallet and ensuring Hedera testnet
+// React hook for connecting to EVM wallet and ensuring Hedera mainnet
 export function useEvmWallet() {
   const connect = useCallback(async () => {
     if (!window.ethereum) throw new Error("No EVM wallet found");
     // Request account access
     await window.ethereum.request({ method: "eth_requestAccounts" });
-    // Ensure Hedera testnet is selected
-    await addOrSwitchHederaTestnet();
+    // Ensure Hedera mainnet is selected
+    await addOrSwitchHederaMainnet();
   }, []);
 
   return { connect };
